@@ -1,13 +1,22 @@
-name: "Yay internet!"
+name: "Sha Tao"
 output_dir: "."
 navbar:
   title: "Home"
+  left:
+    - text: "Resume"
+      href: resume.html
+    - text: "Biochem Research"
+      href: biochem.html
   right:
-    - text: "About"
-      href: about.html
     - icon: fa-envelope fa-lg
       href: mailto:<you@youremail.com>
     - icon: fa-github fa-lg
-      href: http://github.com/<YOUR_GH_NAME>/
+      href: http://github.com/st3117/
+    - icon: fa-twitter fa-lg
+      href: https://twitter.com/taosha33
+    - icon: fa-linkedin fa-lg
+      href: https://www.linkedin.com/in/sha-tao-1787b3a7/
 output:
-  html_document
+  html_document:
+    theme: paper
+    css: 'styles.css'
