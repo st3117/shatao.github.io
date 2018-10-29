@@ -66,3 +66,6 @@ Beginner level of R, Python and AutoCAD.
 * Lab Skills: Polymerase Chain Reaction, ELISA, Western Blotting, molecular cloning, etc. 
 * Language: Bilingual in Mandarin and Shanghainese, fluent English.
 * Music: Level 10 certification of piano and level 4 certification of clarinet.
+
+
+My full CV is available [here](files/Resume_Sha_Tao.pdf)
