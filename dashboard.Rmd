@@ -18,4 +18,88 @@ library(forcats)
 library(viridis)
 
 library(plotly)
+library(p8105.datasets)
+```
+
+
+```{r}
+instacart = instacart
+
+```
+
+```{r}
+
+ny_noaa = ny_noaa
+
+ny_noaa = ny_noaa %>% 
+            mutate(year = strftime(date, "%Y"),
+                   month = strftime(date, "%B"),
+                   day = strftime(date, "%d"),
+                   prcp = prcp / 10,
+                   snow = as.numeric(snow),
+                   snwd = as.numeric(snwd),
+                   tmax = as.numeric(tmax) / 10,
+                   tmin = as.numeric(tmin) / 10) %>% 
+            select(id, year, month, day, prcp_mm = prcp, snow_mm = snow, snwd_mm = snwd, tmax_c = tmax, 
+                   tmin_c = tmin)
+
+```
+
+```{r}
+
+rest_inspec = rest_inspec
+
+rest_inspec = 
+
+```
+
+
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Scatterplot
+
+```{r}
+
+# check the change of mean snowfall in winter in NY (Nov, Dec, Jan) in each year.
+ny_noaa %>% 
+  filter(month == "November" | month == "December" | month == "January") %>% 
+  group_by(year) %>% 
+  summarize(mean_snow_mm = mean(snow_mm, na.rm = TRUE)) %>% 
+  rename(Year = year, Snow = mean_snow_mm) %>% 
+  plot_ly(x = ~Year, y = ~Snow,
+          type = 'scatter', mode = 'lines')
+
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### boxplot
+
+```{r}
+# check the mean snowfall in winter in NY (Nov, Dec, Jan) in each year.
+ny_noaa %>% 
+  filter(month == "November" | month == "December" | month == "January") %>% 
+  group_by(year) %>% 
+  summarize(mean_snow_mm = mean(snow_mm, na.rm = TRUE)) %>% 
+  rename(Year = year, Snow = mean_snow_mm) %>% 
+  plot_ly(x = ~Year, y = ~Snow, color = ~Year,
+          colors = "Set2",
+          type = "box")
+```
+
+### Bar chart
+
+```{r}
+# check the order time pattern
+
+instacart %>% 
+  distinct(order_id, order_hour_of_day) %>% 
+  group_by(order_hour_of_day) %>% 
+  summarize(n = n()) %>% 
+  rename("Hour" = order_hour_of_day) %>% 
+  plot_ly(x = ~Hour, y = ~n, color = ~Hour, type = "bar")
+
 ```
