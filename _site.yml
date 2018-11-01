@@ -7,6 +7,8 @@ navbar:
       href: resume.html
     - text: "Biochem Research"
       href: biochem.html
+    - text: "Homework 4 Dashboard"
+      href: dashboard.html
   right:
     - icon: fa-envelope fa-lg
       href: mailto:<taosha33@outlook.com>
