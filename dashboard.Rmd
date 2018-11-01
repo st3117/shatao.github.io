@@ -1,0 +1,21 @@
+---
+title: "dashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+```
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(stringr)
+library(forcats)
+library(viridis)
+
+library(plotly)
+```
