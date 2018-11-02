@@ -24,76 +24,85 @@ library(p8105.datasets)
 ```{r load_datasets}
 
 # load instacart
-instacart = instacart
-
-# load ny_noaa
 ny_noaa = ny_noaa
 
-# extract year and month, keep snowfall (have to create a new dataset, due to the error)
-ny_noaa2 = ny_noaa %>% 
-            mutate(year = format(date, "%Y"),
-                   month = format(date, "%m"),
-                   day = format(date, "%d"),
-                   snow = as.numeric(snow)) %>% 
-            select(id, year, month, day, snow_mm = snow)
+# extract year, month and day from date, and do some unit convertion
 
-# load rest_inspec
-rest_inspec = rest_inspec
-
-# filter out missing data, and convert neighbour to a factor variable
-rest_inspec = 
-  rest_inspec %>% 
-  filter(!is.na(score) & !boro == "Missing") %>% 
-  mutate(boro = as.factor(boro))
+noaa = 
+  ny_noaa %>% 
+    mutate(year = strftime(date, "%Y"),
+           month = strftime(date, "%B"),
+           month = as.factor(month),
+           month = factor(month, levels = c("January", "February", "March", "April", "May", "June",
+                                            "July", "August", "September", "October", "November", "December")),
+           day = strftime(date, "%d"),
+           prcp = prcp / 10,
+           snow = as.numeric(snow),
+           snwd = as.numeric(snwd),
+           tmax = as.numeric(tmax) / 10,
+           tmin = as.numeric(tmin) / 10) %>% 
+    select(id, year, month, day, prcp_mm = prcp, snow_mm = snow, snwd_mm = snwd, tmax_c = tmax, tmin_c = tmin)
 
 ```
 
 Column {data-width=650}
 -----------------------------------------------------------------------
 
-### Boxplot
+### Bar Chart
 
-```{r boxplot}
+```{r bar chart}
 
-# check the mean score distribution in each neighbourhood.
+# check the change of total snowfall in winter in NY (Nov, Dec, Jan, Feb, Mar) in each year.
 
-rest_inspec %>% 
-  rename(Score = score, Neighbourhood = boro) %>% 
-  plot_ly(y = ~Score, color = ~Neighbourhood, colors = "Set2", type = "box")
+noaa %>% 
+  filter(month == "November" | month == "December" | month == "January" |
+         month == "February" | month == "March") %>% 
+  group_by(year, month) %>% 
+  summarize(total_snow = sum(snow_mm, na.rm = TRUE)) %>% 
+  plot_ly(x = ~year, y = ~total_snow, color = ~month, type = "bar") %>% 
+  layout(title = 'Total Snowfall in Winter Each Year',
+         xaxis = list(title = "Year"), 
+         yaxis = list(title = 'Total Snowfall in mm'), 
+         barmode = 'stack')
 
 ```
 
 Column {data-width=350}
 -----------------------------------------------------------------------
 
-### Scatterplot
+### Lineplot
 
-```{r scatterplot}
+```{r lineplot}
 
-# check the change of mean snowfall in winter in NY (Nov, Dec, Jan) in each year.
+# check the average highest and lowest temperature change each year.
 
-ny_noaa2 %>% 
-  filter(month == "11" | month == "12" | month == "01") %>% 
+noaa %>% 
   group_by(year) %>% 
-  summarize(mean_snow_mm = mean(snow_mm, na.rm = TRUE)) %>% 
-  rename(Year = year, Snow = mean_snow_mm) %>% 
-  plot_ly(x = ~Year, y = ~Snow, type = 'scatter', mode = 'lines')
+  summarize(mean_tmax = mean(tmax_c, na.rm = TRUE),
+            mean_tmin = mean(tmin_c, na.rm = TRUE)) %>%
+  gather(key = type, value = value, mean_tmax, mean_tmin) %>% 
+  plot_ly(x = ~year, y = ~value, color = ~type, type = 'scatter', mode = 'lines') %>% 
+  layout(title = 'Average Highest and Lowest Temperature Each Year',
+         xaxis = list(title = "Year"), 
+         yaxis = list(title = 'Average Temperature in celsius degree'))
 
 ```
 
 
 ### Bar chart
 
-```{r barchart}
+```{r boxplot}
 
-# check the order time pattern.
+# check the order time and day of the week pattern.
 
-instacart %>% 
-  distinct(order_id, order_hour_of_day) %>% 
-  group_by(order_hour_of_day) %>% 
-  summarize(n = n()) %>% 
-  rename("Hour" = order_hour_of_day) %>% 
-  plot_ly(x = ~Hour, y = ~n, color = ~Hour, type = "bar")
+noaa %>% 
+  filter(!is.na(prcp_mm)) %>% 
+  group_by(year, month) %>% 
+  summarize(total_prcp = sum(prcp_mm)) %>% 
+  plot_ly(x = ~year, y = ~total_prcp, type = "box") %>% 
+  layout(title = 'Total Precipitation Each Year',
+         xaxis = list(title = "Year"), 
+         yaxis = list(title = 'Total Precipitation in mm'))
 
 ```
 
